@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: ghcr.io/Therbata/Zadanie2
+  IMAGE_NAME: ghcr.io/Therbata/zadanie2
   CACHE_IMAGE: s99594/build-cache:latest
 
 jobs:
