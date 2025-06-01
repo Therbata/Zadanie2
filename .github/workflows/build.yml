@@ -32,7 +32,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build multi-arch image with cache
+      - name: Build and export image to DockerHub cache
         id: build
         uses: docker/build-push-action@v5
         with:
@@ -41,7 +41,7 @@ jobs:
           tags: ${{ env.IMAGE_NAME }}:latest
           cache-from: type=registry,ref=${{ env.CACHE_IMAGE }}
           cache-to: type=registry,ref=${{ env.CACHE_IMAGE }},mode=max
-          outputs: type=docker
+          push: false
 
       - name: Install Trivy
         uses: aquasecurity/trivy-action@master
