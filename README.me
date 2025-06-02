@@ -11,10 +11,10 @@ Workflow realizuje automatyczne budowanie, skanowanie i publikację obrazu Docke
 1. **Pobranie kodu źródłowego** za pomocą `actions/checkout@v4`.
 2. **Konfiguracja środowiska `buildx`**, które umożliwia budowanie obrazów dla wielu architektur.
 3. **Logowanie do rejestrów DockerHub i GHCR** – potrzebne do wykorzystania cache i publikacji obrazu.
-4. **Generowanie tagów** z wykorzystaniem `docker/metadata-action` – np. `latest`, `sha-<hash>`, `vX.Y.Z`. 
+4. **Generowanie tagów** z wykorzystaniem `docker/metadata-action`.
 5. **Budowanie lokalnego obrazu Docker** (tylko dla `linux/amd64`) – z wykorzystaniem `outputs: type=docker`.
-6. **Skanowanie obrazu lokalnego za pomocą Trivy** – jeśli wykryje podatności CRITICAL/HIGH, obraz nie jest publikowany. 
-7. **Publikacja multiarchitekturnego obrazu (`linux/amd64`, `linux/arm64`) do GHCR**, tylko jeśli build i skan zakończą się sukcesem.
+6. **Skanowanie obrazu lokalnego za pomocą Trivy**.
+7. **Publikacja multiarchitekturnego obrazu (`linux/amd64`, `linux/arm64`).
 8. **Wykorzystanie cache z DockerHub (`s99594/build-cache:latest`)**, zapis/odczyt z użyciem `type=registry`, `mode=max`.
 ---
 
