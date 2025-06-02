@@ -46,7 +46,7 @@ jobs:
           tags: |
             type=sha,priority=100,prefix=sha-,format=short
             type=semver,priority=200,pattern={{version}}
-s
+
       - name: Build and export image to DockerHub cache
         id: build
         uses: docker/build-push-action@v5
