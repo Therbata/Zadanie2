@@ -12,6 +12,11 @@ env:
 jobs:
   build-and-scan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+      
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -31,29 +36,40 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Generate Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          flavor: latest
+          tags: |
+            type=sha,priority=100,prefix=sha-,format=short
+            type=semver,priority=200,pattern={{version}}
 
       - name: Build and export image to DockerHub cache
         id: build
         uses: docker/build-push-action@v5
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
-          tags: ${{ env.IMAGE_NAME }}:latest
+          platforms: linux/amd64
+          tags: zadanie2:latest
+          outputs: type=docker
           cache-from: type=registry,ref=${{ env.CACHE_IMAGE }}
           cache-to: type=registry,ref=${{ env.CACHE_IMAGE }},mode=max
-          push: false
 
       - name: Install Trivy
+        id: trivy
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: image
-          image-ref: ${{ env.IMAGE_NAME }}:latest
+          image-ref: zadanie2:latest
           format: table
           exit-code: 1
           severity: CRITICAL,HIGH
         continue-on-error: true
 
-      - name: Push image to GHCR if no critical/high CVEs
+      - name: Push image to GHCR 
         if: ${{ steps.build.outcome == 'success' && steps.trivy.outcome == 'success' }}
         uses: docker/build-push-action@v5
         with:

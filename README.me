@@ -1,0 +1,57 @@
+# zadanie2 
+
+Pipeline
+
+---
+
+## Opis działania workflowa i etapy
+
+Workflow realizuje automatyczne budowanie, skanowanie i publikację obrazu Dockera aplikacji z zadania 1.
+
+1. **Pobranie kodu źródłowego** za pomocą `actions/checkout@v4`.
+2. **Konfiguracja środowiska `buildx`**, które umożliwia budowanie obrazów dla wielu architektur.
+3. **Logowanie do rejestrów DockerHub i GHCR** – potrzebne do wykorzystania cache i publikacji obrazu.
+4. **Generowanie tagów** z wykorzystaniem `docker/metadata-action` – np. `latest`, `sha-<hash>`, `vX.Y.Z`. 
+5. **Budowanie lokalnego obrazu Docker** (tylko dla `linux/amd64`) – z wykorzystaniem `outputs: type=docker`.
+6. **Skanowanie obrazu lokalnego za pomocą Trivy** – jeśli wykryje podatności CRITICAL/HIGH, obraz nie jest publikowany. 
+7. **Publikacja multiarchitekturnego obrazu (`linux/amd64`, `linux/arm64`) do GHCR**, tylko jeśli build i skan zakończą się sukcesem.
+8. **Wykorzystanie cache z DockerHub (`s99594/build-cache:latest`)**, zapis/odczyt z użyciem `type=registry`, `mode=max`.
+---
+
+## Zastosowałem Trivy, ponieważ:
+
+- obsługuje skanowanie obrazów lokalnych (bez potrzeby wcześniejszego pushowania),
+- umożliwia ustawienie poziomu krytyczności błędów (`CRITICAL,HIGH`),
+- darmowy
+
+---
+
+## Tagowanie obrazów
+
+Użyłem `docker/metadata-action`, aby uzyskać zautomatyzowane tagi:
+
+- `latest`
+- `sha-'
+- semver
+
+
+---
+
+##  Cache warstw Dockera
+
+Cache jest odczytywany i zapisywany do mojego publicznego repozytorium DockerHub (`s99594/build-cache:latest`), Użyłem:
+
+- eksportera `registry`
+- trybu `mode=max` 
+
+Źródła: 
+-[https://docs.docker.com/build/cache/backends/registry/]
+-(https://docs.docker.com/build/cache/backends/registry/)
+-[https://github.com/docker/metadata-action]
+-(https://github.com/docker/metadata-action)
+-(https://github.com/docker/metadata-action)
+-(https://github.com/aquasecurity/trivy-action)
+-Instrukcja do laboratorium numer 10.
+## 👤 Autor
+
+- Jakub Kacper Kramek – S99594
